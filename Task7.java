@@ -1,87 +1,109 @@
-public class Task7 {
-    class Node {
-        int data;
-        Node next;
-        public Node(int data) {
-            this.data = data;
-            this.next = null;
-        }
-    }
-    public Node insertAtLast(Node head, int value) {
-        Node node = new Node(value);
-        if (head == null) {
-            return node;
-        } else {
-            Node currnode = head;
-            while (currnode.next != null) {
-                currnode = currnode.next;
-            }
-            currnode.next = node;
-        }
-        return head;
-    }
+ class DoubleLL {
+     Node head;
 
-    public Node even(Node head) {
-        Node oddh = null;
-        Node oddt = null;
-        Node evenh = null;
-        Node event = null;
-        Node curr = head;
+     public void insertFirst(int data) {
+         Node node = new Node(data);
+         node.next = head;
+         if (head != null) {
+             head.prev = node;
+         }
+         head = node;
+     }
 
-        while (curr != null) {
-            if (curr.data%2 == 0) {
-                if (evenh == null) {
-                    evenh = curr;
-                    event = evenh;
-                } else {
-                    event.next = curr;
-                    event = curr;
-                }
-            } else {
-                if (oddh == null) {
-                    oddh = curr;
-                    oddt = oddh;
-                } else {
-                    oddt.next = curr;
-                    oddt = curr;
-                }
-            }
-            curr = curr.next;
-        }
-        if (event!=null) {
-            event.next = oddh;
-        }
-        if (oddt!=null) {
-            oddt.next = null;
-        }
-        if (evenh!=null) {
-            return evenh;
-        } else {
-            return oddh;
+     public void insertChild(int parentData, int childData) {
+         Node parentNode = find(parentData);
+         if (parentNode == null) {
+             System.out.println("parent node not found");
+             return;
+         }
+         Node childNode = new Node(childData);
+         childNode.child = parentNode.child;
+         parentNode.child = childNode;
+     }
+
+     public Node flatten(Node head) {
+         if (head == null) return null;
+
+         Node current = head;
+         while (current != null) {
+             if (current.child != null) {
+
+                 Node child = flatten(current.child);
+
+                 Node next = current.next;
+
+                 current.next = child;
+                 child.prev = current;
+
+                 while (child.next != null) {
+                     child = child.next;
+                 }
+
+                 child.next = next;
+                 if (next != null) {
+                     next.prev = child;
+                 }
+
+                 current.child = null;
+
+                 current = next;
+             } else {
+                 current = current.next;
+             }
+         }
+
+         return head;
+     }
+
+     public void displayFlattened() {
+         Node curr = flatten(head);
+         while (curr != null) {
+             System.out.print(curr.data + " ");
+             curr = curr.next;
+         }
+         System.out.println();
+     }
+
+     public Node find(int val) {
+         Node node = head;
+         while (node != null) {
+             if (node.data == val) {
+                 return node;
+             }
+             node = node.next;
+         }
+         return null;
+     }
+
+     class Node {
+         int data;
+         Node next;
+         Node prev;
+         Node child;
+
+         public Node(int data) {
+             this.data = data;
+         }
+     }
+ }
+    public class Task7 {
+        public static void main(String[] args) {
+            DoubleLL d = new DoubleLL();
+
+            d.insertFirst(5);
+            d.insertFirst(4);
+            d.insertFirst(3);
+            d.insertFirst(2);
+            d.insertFirst(1);
+
+            d.insertChild(3, 7);
+            d.insertChild(7, 8);
+            d.insertChild(8, 9);
+            d.insertChild(9, 10);
+            d.insertChild(8, 11);
+            d.insertChild(11, 12);
+
+
+            d.displayFlattened();
         }
     }
-    public void printList(Node head) {
-        if (head==null){
-            System.out.println("list is empty");
-            return;
-        }
-        Node currnode=head;
-        while (currnode!=null){
-            System.out.println(currnode.data+" ");
-            currnode=currnode.next;
-        }
-        System.out.println("END");
-    }
-    public static void main(String[] args) {
-        Task7 list = new Task7();
-        Node head = null;
-        head = list.insertAtLast(head,1);
-        head = list.insertAtLast(head,2);
-        head = list.insertAtLast(head,3);
-        head = list.insertAtLast(head,4);
-
-        head = list.even(head);
-
-        list.printList(head);
-    }
-}
