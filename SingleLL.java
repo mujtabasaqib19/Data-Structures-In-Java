@@ -1,174 +1,110 @@
-//Task1
 public class SingleLL {
+    private Node head;
+    private Node tail;
     private int size;
-    Node head;
+
     public SingleLL() {
-        this.size=0;
+        this.size = 0;
     }
-    public class Node{
+    public class Node {
         int data;
         Node next;
-        public Node(int data) {
-            this.data=data;
-            size++;
-        }
 
-        public Node(int data, Node next) {
+        public Node(int data) {
             this.data = data;
-            this.next = next;
         }
     }
-    //task3
-    //add: add first or add last
     public void addfirst(int data){
         Node newnode=new Node(data);
-        if(head==null){
-            head=newnode;
-            return;
+        if (head==null) {
+            head = newnode;
+            tail = newnode;
         }
         newnode.next=head;
         head=newnode;
     }
-    //task2
     public void addlast(int data){
         Node newnode=new Node(data);
-        if(head==null){
-            head=newnode;
-            return;
+        if(tail==null){
+            addfirst(data);
         }
-        Node currnode=head;
-        while (currnode.next!=null){
-            currnode=currnode.next;
-        }
-        currnode.next=newnode;
+        tail.next=newnode;
+        tail=newnode;
     }
-    public void display(){
-        if (head==null){
-            System.out.println("list is empty");
-            return;
+    public void mergeSort() {
+        head = mergeSort(head);
+    }
+    private Node mergeSort(Node head) {
+        if (head == null || head.next == null) {
+            return head;
         }
-        Node currnode=head;
-        while (currnode!=null){
-            System.out.println(currnode.data +" ");
-            currnode=currnode.next;
+
+        Node middle = getmid(head);
+        Node nextOfMiddle = middle.next;
+        middle.next = null;
+
+        Node left = mergeSort(head);
+        Node right = mergeSort(nextOfMiddle);
+
+        Node sortedList = sortedMerge(left, right);
+        return sortedList;
+    }
+
+    private Node getmid(Node h) {
+        if (h == null) {
+            return h;
+        }
+        Node slow = h, fast = h.next;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+    private Node sortedMerge(Node head1, Node head2) {
+        Node result = null;
+        if (head1 == null)
+            return head2;
+        if (head2 == null)
+            return head1;
+
+        if (head1.data <= head2.data) {
+            result = head1;
+            result.next = sortedMerge(head1.next, head2);
+        } else {
+            result = head2;
+            result.next = sortedMerge(head1, head2.next);
+        }
+        return result;
+    }
+    public void display() {
+        Node current = head;
+        while (current != null) {
+            System.out.print(current.data+" -> ");
+            current = current.next;
         }
         System.out.println("END");
     }
-    //task5
-    //delete first
-    public void deletefirst(){
-        if (head==null){
-            System.out.println("Empty list");
-            return;
-        }
-        size--;
-        head=head.next;
-    }
-    // delete last
-    public void deletelast(){
-        if (head==null){
-            System.out.println("Empty list");
-            return;
-        }
-        size--;
-        if (head.next==null){
-            head=null;
-            return;
-        }
-
-        Node secondlast=head;
-        Node lastNode=head.next;
-
-        while (lastNode.next!=null){
-            lastNode=lastNode.next;
-            secondlast=secondlast.next;
-        }
-        secondlast.next=null;
-    }
-    //task6
-    public void update(int prev, int new_val) {
-        Node temp = head;
-        while (temp!=null) {
-            if (temp.data == prev) {
-                temp.data = new_val;
-                return;
-            }
-            temp = temp.next;
-        }
-        System.out.println("value not found");
-    }
-    //task4
-    public void add(int new_val, int prev) {
-        Node temp = head;
-        while (temp != null) {
-            if (temp.data == prev) {
-                Node newNode = new Node(new_val, temp.next);
-                temp.next = newNode;
-                return;
-            }
-            temp = temp.next;
-        }
-        System.out.println("previous value not found");
-    }
-    public void insert(int val,int index){
-        if (index==0){
-            addfirst(val);
-        }
-        if (index==size){
-            addlast(val);
-        }
-        Node temp=head;
-        for (int i = 1; i <index; i++) {
-            temp=temp.next;
-        }
-        Node node=new Node(val,temp.next);
-        temp.next=node;
-        size++;
-    }
-    //task5
-    public int delete(int index) {
-        if (index == 0) {
-            deletefirst();
-        }
-        if (index == size - 1) {
-            deletelast();
-        }
-        Node prev = get(index - 1);
-        if (prev.next == null) {
-            return 0;
-        }
-        int val = prev.next.data;
-        if (index == size - 1) {
-            deletelast();
-            return val;
-        }
-        prev.next = prev.next.next;
-        size--;
-        return val;
-    }
-    private Node get(int index) {
-        Node temp = head;
-        for (int i = 0; i < index; i++) {
-            temp = temp.next;
-        }
-        return temp;
-    }
-    public int getSize() {
-        return size;
-    }
 
     public static void main(String[] args) {
-        SingleLL singleLL=new SingleLL();
+        SingleLL list = new SingleLL();
+        list.addlast(10);
+        list.addlast(9);
+        list.addlast(8);
+        list.addlast(7);
+        list.addlast(6);
+        list.addlast(5);
+        list.addlast(4);
+        list.addlast(3);
+        list.addlast(2);
+        list.addlast(1);
 
-        singleLL.addfirst(1);
-        singleLL.addfirst(4);
-        singleLL.addlast(7);
-        singleLL.addfirst(8);
-        singleLL.addfirst(10);
+        System.out.println("original list ");
+        list.display();
 
-        singleLL.insert(7,2);
-        singleLL.delete(2);
-        singleLL.update(7,9);
-        singleLL.display();
+        list.mergeSort();
+
+        System.out.println("sorted list ");
+        list.display();
     }
 }
